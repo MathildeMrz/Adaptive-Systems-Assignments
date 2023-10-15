@@ -1,4 +1,4 @@
-# Practical_Assignement1
+# Practical_Assignment1
 
 Given this data set including news, the assignment consists of the following tasks:
 
