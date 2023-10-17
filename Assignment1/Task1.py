@@ -1,4 +1,5 @@
 import datetime
+import csv
 
 from gensim import corpora
 from gensim import models
@@ -12,17 +13,24 @@ from nltk import PorterStemmer
 
 init_t: datetime = datetime.datetime.now()  # init the time for the execution time calculation
 
-documents = [
-    "Human machine survey computer interface interface eps time for lab abc computer applications user",
-    "A survey of user opinion of computer system user response time computer user interface interface",
-    "The EPS user users interfaces interface human interface computer human management system user",
-    "System and human interface interface engineering testing of EPS computer user",
-    "Relation of users perceived response time to error measurement trees",
-    "The generation of random binary unordered paths minors user user computer",
-    "The intersection graph of paths in trees paths trees",
-    "Graph minors IV Widths of trees and well quasi ordering graph paths",
-    "Graph minors A tree paths binary trees graphs",
-]
+news_file = "news.csv"
+
+# CSV extraction #
+all_news = []
+descriptions = []
+#food_drink_news = []
+
+with open(news_file, 'r', newline='', encoding='utf-8') as csv_file:
+    reader_csv = csv.reader(csv_file)
+
+    for line in reader_csv:
+        all_news.append(line)
+        descriptions.append(line[3])
+
+        #if ")Food & Drink" in line[2]:
+            #food_drink_news.append(line)
+
+print("Before"+descriptions[1])
 
 porter = PorterStemmer()
 
@@ -30,8 +38,10 @@ porter = PorterStemmer()
 stoplist = stopwords.words('english')
 texts = [
     [porter.stem(word) for word in document.lower().split() if word not in stoplist]
-    for document in documents
+    for document in descriptions
 ]
+
+print("After"+descriptions[1])
 
 print("Tokens of each document:")
 pprint(texts)
@@ -89,7 +99,7 @@ print("whose tfidf vector is: " + str(vec_tfidf))
 print()
 print("The Similarities between this doc and the documents of the corpus are:")
 for doc_position, doc_score in sims:
-    print(doc_score, documents[doc_position])
+    print(doc_score, descriptions[doc_position])
 
 end_t: datetime = datetime.datetime.now()  # to mark the end of the program
 
