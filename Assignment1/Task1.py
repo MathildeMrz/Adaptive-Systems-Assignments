@@ -1,136 +1,97 @@
-#!/usr/bin/env python
-
-import re
-import csv
 import datetime
 
 from gensim import corpora
 from gensim import models
-from gensim import similarities
 from pprint import pprint  # pretty-printer
+from gensim import similarities
 
-from nltk import PorterStemmer
+import re
+
 from nltk.corpus import stopwords
+from nltk import PorterStemmer
 
-init_t: datetime = datetime.datetime.now()
+init_t: datetime = datetime.datetime.now()  # init the time for the execution time calculation
 
-# TASK 1
-# Implement the following pseudocode to calculate the variable ratio_quality using the TFIDF vectors:<br>
-# total_goods = 0<br>
-# For every article (a) on topic "Food and Drink":<br>
-#    Obtain the top-10 most similar articles (top-10) in Corpus to a<br>
-#    Count how many articles in top-10 are related to topic "Food and Drink" (goods)<br>
-#    total_goods = total_goods + goods<br>
-# ratio_quality = total_goods/(num_articles_food_and_drink*10)<br>
-# And measure the execution times separately for the following two subprocesses: <br>
-# Creating the model (from the program begin to the call similarities.MatrixSimilarity(tfidf_vectors))<br>
-# Implementation of the pseudocode above.<br>
-# 
-
-# Implementation of the pseudocode
-def ratio_quality_using_TFIDF(topic_Food_and_Drink, goods, num_articles_food_and_drink):
-    total_goods = 0
-    for a in topic_Food_and_Drink :
-        total_goods = total_goods + goods
-        #    Obtain the top-10 most similar articles (top-10) in Corpus to a<br>
-        #    Count how many articles in top-10 are related to topic "Food and Drink" (goods)<br>
-    ratio_quality = total_goods/(num_articles_food_and_drink * 10)
-    return ratio_quality
-
-# import our csv file and read it
-csv_file_path = './news.csv'
-csv_full_text = ""
-
-with open(csv_file_path, newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        row_text = ' '.join(row)
-        csv_full_text += row_text + '\n'
-# print the text 
-print(csv_full_text)
-
+documents = [
+    "Human machine survey computer interface interface eps time for lab abc computer applications user",
+    "A survey of user opinion of computer system user response time computer user interface interface",
+    "The EPS user users interfaces interface human interface computer human management system user",
+    "System and human interface interface engineering testing of EPS computer user",
+    "Relation of users perceived response time to error measurement trees",
+    "The generation of random binary unordered paths minors user user computer",
+    "The intersection graph of paths in trees paths trees",
+    "Graph minors IV Widths of trees and well quasi ordering graph paths",
+    "Graph minors A tree paths binary trees graphs",
+]
 
 porter = PorterStemmer()
 
 # remove common words and tokenize
 stoplist = stopwords.words('english')
 texts = [
-    [porter.stem(word) for word in csv_full_text.lower().split() if word not in stoplist]
-    for csv_full_text in csv_full_text
+    [porter.stem(word) for word in document.lower().split() if word not in stoplist]
+    for document in documents
 ]
 
+print("Tokens of each document:")
+pprint(texts)
 
 # create mapping keyword-id
 dictionary = corpora.Dictionary(texts)
+
 print()
 print("Mapping keyword-id:")
 pprint(dictionary.token2id)
 
-id2token = dict(dictionary.items())
-
-
 # create the vector for each doc
 model_bow = [dictionary.doc2bow(text) for text in texts]
 
+# create tfidf model
+tfidf = models.TfidfModel(model_bow)
+tfidf_vectors = tfidf[model_bow]
 
-# create the LDA model from bow vectors
-lda = models.LdaModel(model_bow, num_topics=2, id2word=dictionary, random_state=30)
-# random_state: forced to always obtain the same results in all the executions
-lda_vectors = []
-for v in model_bow:
-    lda_vectors.append(lda[v])
+id2token = dict(dictionary.items())
 
-print()
-print("LDA vectors for docs (in terms of topics):")
-i = 0
-for v in lda_vectors:
-    print(v, documents[i])
-    i += 1
-
-matrix_lda = similarities.MatrixSimilarity(lda_vectors)
-print()
-print("Matrix similarities")
-print(matrix_lda)
 
 def convert(match):
-    return dictionary.id2token[int(match.group(0)[1:-1])]
+    return dictionary.id2token[int(match.group(0)[0:-1])]
 
-print("LDA Topics:")
-for t in lda.print_topics(num_words=30):
-    print(re.sub('"[0-9]+"', convert, str(t)))
-
-end_creation_model_t: datetime = datetime.datetime.now()
 
 print()
+print("Vectors for documents (the positions with zeros are not shown):")
+for doc in tfidf_vectors:
+    print(re.sub("[0-9]+,", convert, str(doc)))
 
+matrix_tfidf = similarities.MatrixSimilarity(tfidf_vectors)  # this matrix will be necessary to calculate similarity between documents
 
-# obtain LDA vector for the following doc<br>
-# doc = "Human computer interaction"
+end_creation_model_t: datetime = datetime.datetime.now()  # just after the calculation of the matrix similarity -> time function
 
+print()
+print("Matrix similarities")
+print(matrix_tfidf)
+
+# obtain tfidf vector for the following doc
 doc = "trees graph human"
 doc_s = [porter.stem(word) for word in doc.lower().split() if word not in stoplist]
 
 vec_bow = dictionary.doc2bow(doc_s)
-vec_lda = lda[vec_bow]
+vec_tfidf = tfidf[vec_bow]
 
-
-# calculate similarities between doc and each doc of texts using lda vectors and cosine
-sims = matrix_lda[vec_lda]
-
+# calculate similarities between doc and each doc of texts using tfidf vectors and cosine
+sims = matrix_tfidf[vec_tfidf]  # sims is a list a similarities
 
 # sort similarities in descending order
 sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
 print()
 print("Given the doc: " + doc)
-print("whose LDA vector is: " + str(vec_lda))
+print("whose tfidf vector is: " + str(vec_tfidf))
 print()
 print("The Similarities between this doc and the documents of the corpus are:")
 for doc_position, doc_score in sims:
     print(doc_score, documents[doc_position])
 
-end_t: datetime = datetime.datetime.now()
-
+end_t: datetime = datetime.datetime.now()  # to mark the end of the program
 
 # get execution time
 elapsed_time_model_creation: datetime = end_creation_model_t - init_t
