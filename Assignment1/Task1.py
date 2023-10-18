@@ -3,107 +3,99 @@ import csv
 
 from gensim import corpora
 from gensim import models
-from pprint import pprint  # pretty-printer
 from gensim import similarities
-
-import re
 
 from nltk.corpus import stopwords
 from nltk import PorterStemmer
 
-init_t: datetime = datetime.datetime.now()  # init the time for the execution time calculation
+# Initiating the time for the execution time calculation
+init_t: datetime = datetime.datetime.now()
 
+# CSV extraction
 news_file = "news.csv"
 
-# CSV extraction #
 all_news = []
 descriptions = []
-#food_drink_news = []
+food_drink_descriptions = []
 
+# Read CSV
 with open(news_file, 'r', newline='', encoding='utf-8') as csv_file:
     reader_csv = csv.reader(csv_file)
-
     for line in reader_csv:
         all_news.append(line)
         descriptions.append(line[3])
 
-        #if ")Food & Drink" in line[2]:
-            #food_drink_news.append(line)
+        if "Food & Drink" in line[2]:
+            food_drink_descriptions.append(line[3])
 
-print("Before"+descriptions[1])
+num_articles_food_and_drink = len(food_drink_descriptions)
+
+# Delete the first row 'description' name
+descriptions.pop(0)
 
 porter = PorterStemmer()
-
-# remove common words and tokenize
+# Remove common words and tokenize
 stoplist = stopwords.words('english')
+
+# Array of list of words for each document
 texts = [
     [porter.stem(word) for word in document.lower().split() if word not in stoplist]
     for document in descriptions
 ]
 
-print("After"+descriptions[1])
-
-print("Tokens of each document:")
-pprint(texts)
-
 # create mapping keyword-id
 dictionary = corpora.Dictionary(texts)
 
-print()
-print("Mapping keyword-id:")
-pprint(dictionary.token2id)
-
-# create the vector for each doc
 model_bow = [dictionary.doc2bow(text) for text in texts]
 
 # create tfidf model
 tfidf = models.TfidfModel(model_bow)
 tfidf_vectors = tfidf[model_bow]
-
-id2token = dict(dictionary.items())
-
-
-def convert(match):
-    return dictionary.id2token[int(match.group(0)[0:-1])]
-
-
-print()
-print("Vectors for documents (the positions with zeros are not shown):")
-for doc in tfidf_vectors:
-    print(re.sub("[0-9]+,", convert, str(doc)))
-
 matrix_tfidf = similarities.MatrixSimilarity(tfidf_vectors)  # this matrix will be necessary to calculate similarity between documents
 
 end_creation_model_t: datetime = datetime.datetime.now()  # just after the calculation of the matrix similarity -> time function
 
-print()
-print("Matrix similarities")
-print(matrix_tfidf)
+total_goods = 0
 
-# obtain tfidf vector for the following doc
-doc = "trees graph human"
-doc_s = [porter.stem(word) for word in doc.lower().split() if word not in stoplist]
+# Pseudo-code
+for food_drink_description in food_drink_descriptions:
+    # Filtering the food and drink descriptions with stopwords and other regex expressions
+    doc_s = [porter.stem(word) for word in food_drink_description.lower().split() if word not in stoplist]
 
-vec_bow = dictionary.doc2bow(doc_s)
-vec_tfidf = tfidf[vec_bow]
+    vec_bow = dictionary.doc2bow(doc_s)
+    vec_tfidf = tfidf[vec_bow]
 
-# calculate similarities between doc and each doc of texts using tfidf vectors and cosine
-sims = matrix_tfidf[vec_tfidf]  # sims is a list a similarities
+    # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
+    sims = matrix_tfidf[vec_tfidf]  # sims is a list a similarities
 
-# sort similarities in descending order
-sims = sorted(enumerate(sims), key=lambda item: -item[1])
+    # Sorting similarities in descending order
+    sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
-print()
-print("Given the doc: " + doc)
-print("whose tfidf vector is: " + str(vec_tfidf))
-print()
-print("The Similarities between this doc and the documents of the corpus are:")
-for doc_position, doc_score in sims:
-    print(doc_score, descriptions[doc_position])
+    # Selecting the 10 most similar elements
+    top_10_similar_elements = sims[:10]
+    goods = 0
+
+    # Checking if these 10 elements are part of Drink & Food topics
+    for doc_position, doc_score in top_10_similar_elements:
+        print("Score")
+        print(doc_score)
+        print("Topic")
+        print(all_news[doc_position][2])
+        if all_news[doc_position][2] == "Food & Drink":
+            print("Good ! ")
+            goods = goods + 1
+
+    total_goods = total_goods + goods
+    print(total_goods)
+
+ratio_quality = total_goods / (num_articles_food_and_drink * 10)
+print("total_goods = ", total_goods)
+print("num_articles_food_and_drink = ", num_articles_food_and_drink)
+print("ratio_quality = ", ratio_quality)
 
 end_t: datetime = datetime.datetime.now()  # to mark the end of the program
 
-# get execution time
+# Get execution time
 elapsed_time_model_creation: datetime = end_creation_model_t - init_t
 elapsed_time_comparison: datetime = end_t - end_creation_model_t
 print()
