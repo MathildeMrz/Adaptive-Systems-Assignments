@@ -78,7 +78,7 @@ end_creation_model_t: datetime = datetime.datetime.now()
 ### 
 
 # Create a function to calculate the ratio_quality
-def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
+def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, vector_type, matrix_vector_type):
     
     total_goods = 0
     # Filtering the food and drink descriptions with stopwords and other regex expressions
@@ -86,10 +86,10 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
         doc_s = [porter.stem(word) for word in topic_description.lower().split() if word not in stoplist]
 
         vec_bow = dictionary.doc2bow(doc_s)
-        vec_tfidf = tfidf[vec_bow]
-    
+        vec_vector_type = vector_type[vec_bow]
+
         # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
-        sims = matrix_tfidf[vec_tfidf]
+        sims = matrix_vector_type[vec_vector_type]
 
         # Sorting similarities in descending order
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
@@ -101,20 +101,20 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
         for doc_position, doc_score in top_10_similar_elements:
             print("Topic: ", all_news[doc_position][2], "\nScore: ", doc_score)
             print("-----------------------------------")
-            if all_news[doc_position][2] == "Sports":
+            if all_news[doc_position][2] == "Food & Drink":
                 goods += 1
                 total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
     ratio_quality = total_goods / (num_articles_topic * 10)
-    
+
     print("total_goods =", total_goods)
     print("num_articles_topic =", num_articles_topic)
 
     return ratio_quality
 
 # Apply the above function 'calculate_ratio_quality' and print it
-ratio_quality = calculate_ratio_quality(sports_descriptions, all_news, num_articles_sports)
+ratio_quality = calculate_ratio_quality(sports_descriptions, all_news, num_articles_sports, tfidf, matrix_tfidf)
 print("ratio_quality =", ratio_quality)
 
 # Final time for the subprocess 'pseudocode' (but also the programm in general)

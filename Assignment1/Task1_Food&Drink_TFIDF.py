@@ -86,10 +86,10 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
         doc_s = [porter.stem(word) for word in topic_description.lower().split() if word not in stoplist]
 
         vec_bow = dictionary.doc2bow(doc_s)
-        vec_tfidf = vector_type[vec_bow]
+        vec_vector_type = vector_type[vec_bow]
 
         # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
-        sims = matrix_vector_type[vec_tfidf]
+        sims = matrix_vector_type[vec_vector_type]
 
         # Sorting similarities in descending order
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
@@ -106,7 +106,7 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
                 total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
-    ratio_quality = total_goods / (num_articles_food_and_drink * 10)
+    ratio_quality = total_goods / (num_articles_topic * 10)
 
     print("total_goods =", total_goods)
     print("num_articles_topic =", num_articles_topic)
