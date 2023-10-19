@@ -17,7 +17,7 @@ from nltk import PorterStemmer
 # - Create a dictionary with the words and the relative ids
 ### 
 
-# Starting time for the subprocess 'creating the model'
+# Starting time for the subprocess 'model_creation'
 init_t: datetime = datetime.datetime.now()
 
 # CSV extraction
@@ -58,7 +58,7 @@ model_bow = [dictionary.doc2bow(text) for text in texts]
 
 ### PART 2
 # - Create the TF-IDF model 
-# - Measure the ending execution time for the model
+# - Measure the final execution time for the model
 ### 
 
 tfidf = models.TfidfModel(model_bow)
@@ -66,61 +66,20 @@ tfidf_vectors = tfidf[model_bow]
 # The following matrix will be necessary to calculate similarity between documents
 matrix_tfidf = similarities.MatrixSimilarity(tfidf_vectors)
 
-# Ending time for the subprocess 'creating the model' + Starting time for the subprocess 'pseudocode'
+# Final time for the subprocess 'model_creation' + Starting time for the subprocess 'pseudocode'
 end_creation_model_t: datetime = datetime.datetime.now() 
 
 
 ### PART 3
-# - Create the function based on the pseudocode 
-# - Apply the function the 
-# - Measure the ending execution time for the subprocess 'pseudocode'
+# - Create the function based on the pseudocode to calculate the ratio_quality
+# - Apply the function to our CSV file
+# - Measure the final execution time for the subprocess 'pseudocode' and for the both processes
 ### 
 
-total_goods = 0
-
-# Pseudo-code
-for food_drink_description in food_drink_descriptions:
-    # Filtering the food and drink descriptions with stopwords and other regex expressions
-    doc_s = [porter.stem(word) for word in food_drink_description.lower().split() if word not in stoplist]
-
-    vec_bow = dictionary.doc2bow(doc_s)
-    vec_tfidf = tfidf[vec_bow]
-
-    # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
-    sims = matrix_tfidf[vec_tfidf]  # sims is a list a similarities
-
-    # Sorting similarities in descending order
-    sims = sorted(enumerate(sims), key=lambda item: -item[1])
-
-    # Selecting the 10 most similar elements
-    top_10_similar_elements = sims[:10]
-    goods = 0
-
-    # Checking if these 10 elements are part of Drink & Food topics
-    for doc_position, doc_score in top_10_similar_elements:
-        print("Score")
-        print(doc_score)
-        print("Topic")
-        print(all_news[doc_position][2])
-        if all_news[doc_position][2] == "Food & Drink":
-            print("Good ! ")
-            goods = goods + 1
-
-    total_goods = total_goods + goods
-    print(total_goods)
-
-ratio_quality = total_goods / (num_articles_food_and_drink * 10)
-print("total_goods = ", total_goods)
-print("num_articles_food_and_drink = ", num_articles_food_and_drink)
-print("ratio_quality = ", ratio_quality)
-
-
-'''
-
-def calculate_quality_ratio(food_drink_descriptions, all_news, num_articles_food_and_drink):
+# Create a function to calculate the ratio_quality
+def calculate_ratio_quality(food_drink_descriptions, all_news, num_articles_food_and_drink):
     
     total_goods = 0
-    
     # Filtering the food and drink descriptions with stopwords and other regex expressions
     for food_drink_description in food_drink_descriptions:
         doc_s = [porter.stem(word) for word in food_drink_description.lower().split() if word not in stoplist]
@@ -140,31 +99,69 @@ def calculate_quality_ratio(food_drink_descriptions, all_news, num_articles_food
         goods = 0
         for doc_position, doc_score in top_10_similar_elements:
             if all_news[doc_position][2] == "Food & Drink":
+                print("FOOD&DRINK: \n Score: ", doc_score)
+                print("-----------------------------------")
                 goods += 1
+            else:
+                print("Topic: ", all_news[doc_position][2], "\nScore: ", doc_score)
+                print("-----------------------------------")
 
         total_goods += goods
+        print("current_goods_F&D: ", total_goods)
 
     ratio_quality = total_goods / (num_articles_food_and_drink * 10)
-
+    
     print("total_goods =", total_goods)
     print("num_articles_food_and_drink =", num_articles_food_and_drink)
-    print("ratio_quality =", ratio_quality)
 
     return ratio_quality
 
-# Usage
-food_drink_descriptions = [...]  # Your list of food and drink descriptions
-all_news = [...]  # Your list of all news data
-num_articles_food_and_drink = ...  # The number of articles related to food and drink
-
-quality_ratio = calculate_quality_ratio(food_drink_descriptions, all_news, num_articles_food_and_drink)
+# Apply the above function 'calculate_ratio_quality' and print it
+ratio_quality = calculate_ratio_quality(food_drink_descriptions, all_news, num_articles_food_and_drink)
+print("ratio_quality =", ratio_quality)
 
 '''
+total_goods = 0
+# Pseudo-code
+for food_drink_description in food_drink_descriptions:
+    # Filtering the food and drink descriptions with stopwords and other regex expressions
+    doc_s = [porter.stem(word) for word in food_drink_description.lower().split() if word not in stoplist]
 
-# Ending time for the subprocess 'pseudocode' (but also the programm in general)
+    vec_bow = dictionary.doc2bow(doc_s)
+    vec_tfidf = tfidf[vec_bow]
+
+    # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
+    sims = matrix_tfidf[vec_tfidf]  # sims is a list a similarities
+
+    # Sorting similarities in descending order
+    sims = sorted(enumerate(sims), key=lambda item: -item[1])
+
+    # Selecting the 10 most similar elements
+    top_10_similar_elements = sims[:10]
+    
+    goods = 0
+    # Checking if these 10 elements are part of Drink & Food topics
+    for doc_position, doc_score in top_10_similar_elements:
+        print("Topic: ", all_news[doc_position][2], "\nScore: ", doc_score)
+        print("-----------------------------------")
+        if all_news[doc_position][2] == "Food & Drink":
+            print("FOOD&DRINK: \n Score: ", doc_score)
+            print("-----------------------------------")
+            goods = goods + 1
+
+    total_goods = total_goods + goods
+    print("current_goods_F&D: ", total_goods)
+
+ratio_quality = total_goods / (num_articles_food_and_drink * 10)
+print("total_goods = ", total_goods)
+print("num_articles_food_and_drink = ", num_articles_food_and_drink)
+print("ratio_quality = ", ratio_quality)
+'''
+
+# Final time for the subprocess 'pseudocode' (but also the programm in general)
 end_t: datetime = datetime.datetime.now() 
 
-# Get the execution time for both the two subprocesses
+# Measure the final execution time for both the subprocesses 'model_creation' and 'pseudocode'
 elapsed_time_model_creation: datetime = end_creation_model_t - init_t
 elapsed_time_pseudocode: datetime = end_t - end_creation_model_t
 print()
