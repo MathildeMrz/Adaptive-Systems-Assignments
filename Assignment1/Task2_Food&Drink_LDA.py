@@ -100,7 +100,7 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
         # Selecting the 10 most similar elements
-        top_10_similar_elements = sims[1:11]  # We ignore the first element corresponding to the current document
+        top_10_similar_elements = sims[0:10]
 
         goods = 0
         for doc_position, doc_score in top_10_similar_elements:
@@ -111,6 +111,11 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
                 total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
+
+            if all_news[doc_position][3] == topic_description:
+                print("Comparison of the current article with itself.")
+                print("Score: ", doc_score)
+
     ratio_quality = total_goods / (num_articles_topic * 10)
 
     print("total_goods =", total_goods)

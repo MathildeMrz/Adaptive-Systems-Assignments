@@ -79,7 +79,7 @@ for food_drink_description in food_drink_descriptions:
     sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
     # Selecting the 10 most similar elements
-    top_10_similar_elements = sims[1:11]  # We ignore the first element corresponding to the current document
+    top_10_similar_elements = sims[0:10]
 
     goods = 0
 
@@ -92,6 +92,10 @@ for food_drink_description in food_drink_descriptions:
         if all_news[doc_position][2] == "Food & Drink":
             print("Good ! ")
             goods = goods + 1
+
+        if all_news[doc_position][3] == food_drink_description:
+            print("Comparison of the current article with itself.")
+            print("Score: ", doc_score)
 
     total_goods = total_goods + goods
     print(total_goods)

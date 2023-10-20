@@ -95,11 +95,10 @@ def calculate_ratio_quality(food_drink_descriptions, all_news, num_articles_food
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
         # Selecting the 10 most similar elements
-        top_10_similar_elements = sims[1:11]# We ignore the first element corresponding to the current document
+        top_10_similar_elements = sims[0:10]
 
         goods = 0
         for doc_position, doc_score in top_10_similar_elements:
-
             if all_news[doc_position][2] == "Food & Drink":
                 print("FOOD&DRINK: \n Score: ", doc_score)
                 print("-----------------------------------")
@@ -107,6 +106,10 @@ def calculate_ratio_quality(food_drink_descriptions, all_news, num_articles_food
             else:
                 print("Topic: ", all_news[doc_position][2], "\nScore: ", doc_score)
                 print("-----------------------------------")
+
+            if all_news[doc_position][3] == food_drink_description:
+                print("Comparison of the current article with itself.")
+                print("Score: ", doc_score)
 
         total_goods += goods
         print("current_goods_F&D: ", total_goods)
