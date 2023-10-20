@@ -39,7 +39,8 @@ with open(news_file, 'r', newline='', encoding='utf-8') as csv_file:
 
 num_articles_food_and_drink = len(food_drink_descriptions)
 
-# Delete the first CSV row of the column 'description'
+# Delete the first CSV row of column names
+all_news.pop(0)
 descriptions.pop(0)
 
 porter = PorterStemmer()
@@ -94,10 +95,11 @@ def calculate_ratio_quality(food_drink_descriptions, all_news, num_articles_food
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
         # Selecting the 10 most similar elements
-        top_10_similar_elements = sims[:10]
+        top_10_similar_elements = sims[1:11]# We ignore the first element corresponding to the current document
 
         goods = 0
         for doc_position, doc_score in top_10_similar_elements:
+
             if all_news[doc_position][2] == "Food & Drink":
                 print("FOOD&DRINK: \n Score: ", doc_score)
                 print("-----------------------------------")

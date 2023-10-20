@@ -30,7 +30,8 @@ with open(news_file, 'r', newline='', encoding='utf-8') as csv_file:
 
 num_articles_food_and_drink = len(food_drink_descriptions)
 
-# Delete the first row 'description' name
+# Delete the first CSV row of column names
+all_news.pop(0)
 descriptions.pop(0)
 
 porter = PorterStemmer()
@@ -78,7 +79,8 @@ for food_drink_description in food_drink_descriptions:
     sims = sorted(enumerate(sims), key=lambda item: -item[1])
 
     # Selecting the 10 most similar elements
-    top_10_similar_elements = sims[:10]
+    top_10_similar_elements = sims[1:11]  # We ignore the first element corresponding to the current document
+
     goods = 0
 
     # Checking if these 10 elements are part of Drink & Food topics
