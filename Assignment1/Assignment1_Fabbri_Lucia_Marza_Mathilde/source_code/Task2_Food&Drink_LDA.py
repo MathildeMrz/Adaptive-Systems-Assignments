@@ -58,7 +58,7 @@ model_bow = [dictionary.doc2bow(text) for text in texts]
 
 
 ### PART 2
-# - Create the the LDA model
+# - Create the LDA model
 # - Measure the final execution time for the model
 ### 
 
@@ -93,7 +93,7 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
         vec_bow = dictionary.doc2bow(doc_s)
         vec_vector_type = vector_type[vec_bow]
 
-        # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
+        # Calculating similarities between doc and each doc of texts using lda vectors and cosine
         sims = matrix_vector_type[vec_vector_type]
 
         # Sorting similarities in descending order
@@ -108,13 +108,14 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
             print("-----------------------------------")
             if all_news[doc_position][2] == "Food & Drink":
                 goods += 1
-                total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
 
             if all_news[doc_position][3] == topic_description:
                 print("Comparison of the current article with itself.")
                 print("Score: ", doc_score)
+
+        total_goods += goods
 
     ratio_quality = total_goods / (num_articles_topic * 10)
 

@@ -104,13 +104,14 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
             print("-----------------------------------")
             if all_news[doc_position][2] == "Food & Drink":
                 goods += 1
-                total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
 
             if all_news[doc_position][3] == topic_description:
                 print("Comparison of the current article with itself.")
                 print("Score: ", doc_score)
+
+        total_goods += goods
 
     ratio_quality = total_goods / (num_articles_topic * 10)
 

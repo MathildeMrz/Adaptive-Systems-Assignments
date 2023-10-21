@@ -58,18 +58,19 @@ model_bow = [dictionary.doc2bow(text) for text in texts]
 
 
 ### PART 2
-# - Create the TF-IDF model 
+# - Create the LDA model
 # - Measure the final execution time for the model
-### 
+###
 
-tfidf = models.TfidfModel(model_bow)
-tfidf_vectors = tfidf[model_bow]
+# Create the LDA model from bow vectors, using 30 topics, two passes, and a random state parameter (forced to always obtain the same results in all the executions)
+lda = models.LdaModel(model_bow, num_topics=30, id2word=dictionary, random_state=30, passes=2)
+lda_vectors = []
+for v in model_bow:
+    lda_vectors.append(lda[v])
+
 # The following matrix will be necessary to calculate similarity between documents
-matrix_tfidf = similarities.MatrixSimilarity(tfidf_vectors)
-print("Matrix similarities: ", matrix_tfidf)
-
-# Final time for the subprocess 'model_creation' + Starting time for the subprocess 'pseudocode'
-end_creation_model_t: datetime = datetime.datetime.now() 
+matrix_lda = similarities.MatrixSimilarity(lda_vectors)
+print("Matrix similarities: ", matrix_lda)
 
 
 ### PART 3
@@ -79,7 +80,7 @@ end_creation_model_t: datetime = datetime.datetime.now()
 ### 
 
 # Create a function to calculate the ratio_quality
-def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
+def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, vector_type, matrix_vector_type):
     
     total_goods = 0
     # Filtering the food and drink descriptions with stopwords and other regex expressions
@@ -87,10 +88,10 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
         doc_s = [porter.stem(word) for word in topic_description.lower().split() if word not in stoplist]
 
         vec_bow = dictionary.doc2bow(doc_s)
-        vec_tfidf = tfidf[vec_bow]
-    
-        # Calculating similarities between doc and each doc of texts using tfidf vectors and cosine
-        sims = matrix_tfidf[vec_tfidf]
+        vec_vector_type = vector_type[vec_bow]
+
+        # Calculating similarities between doc and each doc of texts using lda vectors and cosine
+        sims = matrix_vector_type[vec_vector_type]
 
         # Sorting similarities in descending order
         sims = sorted(enumerate(sims), key=lambda item: -item[1])
@@ -104,13 +105,14 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic):
             print("-----------------------------------")
             if all_news[doc_position][2] == "Sports":
                 goods += 1
-                total_goods += goods
                 print("current_goods: ", total_goods)
                 print("-----------------------------------")
 
             if all_news[doc_position][3] == topic_description:
                 print("Comparison of the current article with itself.")
                 print("Score: ", doc_score)
+
+        total_goods += goods
 
     ratio_quality = total_goods / (num_articles_topic * 10)
     
