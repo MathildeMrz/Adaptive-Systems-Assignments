@@ -79,9 +79,10 @@ end_creation_model_t: datetime = datetime.datetime.now()
 ### 
 
 # Create a function to calculate the ratio_quality
-def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, vector_type, matrix_vector_type):
+def calculate_ratio_quality(topic_descriptions, news, num_articles_topic, vector_type, matrix_vector_type):
     
     total_goods = 0
+
     # Filtering the food and drink descriptions with stopwords and other regex expressions
     for topic_description in topic_descriptions:
         doc_s = [porter.stem(word) for word in topic_description.lower().split() if word not in stoplist]
@@ -99,32 +100,32 @@ def calculate_ratio_quality(topic_descriptions, all_news, num_articles_topic, ve
         top_10_similar_elements = sims[0:10]
 
         goods = 0
-        for doc_position, doc_score in top_10_similar_elements:
-            print("Topic: ", all_news[doc_position][2], "\nScore: ", doc_score)
-            print("-----------------------------------")
-            if all_news[doc_position][2] == "Food & Drink":
-                goods += 1
-                print("current_goods: ", total_goods)
-                print("-----------------------------------")
 
-            if all_news[doc_position][3] == topic_description:
+        for doc_position, doc_score in top_10_similar_elements:
+            print("Topic: ", news[doc_position][2], "\nScore: ", doc_score)
+            print("-----------------------------------")
+            # when we found the category "Sports", we update the total goods
+            if news[doc_position][2] == "Sports":
+                goods += 1
+            # when we are trying to compare the current document with itself, we should have score=1
+            if news[doc_position][3] == topic_description:
                 print("Comparison of the current article with itself.")
                 print("Score: ", doc_score)
-
+                print("-----------------------------------")
         total_goods += goods
-
-    ratio_quality = total_goods / (num_articles_topic * 10)
+    ratio = total_goods / (num_articles_topic * 10)
 
     print("total_goods =", total_goods)
     print("num_articles_topic =", num_articles_topic)
 
-    return ratio_quality
+    return ratio
+
 
 # Apply the above function 'calculate_ratio_quality' and print it
 ratio_quality = calculate_ratio_quality(sports_descriptions, all_news, num_articles_sports, tfidf, matrix_tfidf)
 print("ratio_quality =", ratio_quality)
 
-# Final time for the subprocess 'pseudocode' (but also the programm in general)
+# Final time for the subprocess 'pseudocode' (but also the program in general)
 end_t: datetime = datetime.datetime.now() 
 
 # Measure the final execution time for both the subprocesses 'model_creation' and 'pseudocode'
