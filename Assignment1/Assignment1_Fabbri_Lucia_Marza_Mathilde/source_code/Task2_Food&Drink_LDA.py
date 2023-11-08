@@ -63,14 +63,14 @@ model_bow = [dictionary.doc2bow(text) for text in texts]
 ### 
 
 # Create the LDA model from bow vectors, using 30 topics, two passes, and a random state parameter (forced to always obtain the same results in all the executions)
-lda = models.LdaModel(model_bow, num_topics=30, id2word=dictionary, random_state=30, passes=2)
+lda = models.LdaModel(model_bow, num_topics=100, id2word=dictionary, random_state=30, passes=2)
 lda_vectors = []
 for v in model_bow:
     lda_vectors.append(lda[v])
 
 # The following matrix will be necessary to calculate similarity between documents
 matrix_lda = similarities.MatrixSimilarity(lda_vectors)
-print("Matrix similarities: ", matrix_lda)
+#print("Matrix similarities: ", matrix_lda)
 
 # Final time for the subprocess 'model_creation' + Starting time for the subprocess 'pseudocode'
 end_creation_model_t: datetime = datetime.datetime.now()
@@ -106,21 +106,21 @@ def calculate_ratio_quality(topic_descriptions, news, num_articles_topic, vector
         goods = 0
 
         for doc_position, doc_score in top_10_similar_elements:
-            print("Topic: ", news[doc_position][2], "\nScore: ", doc_score)
-            print("-----------------------------------")
+            #print("Topic: ", news[doc_position][2], "\nScore: ", doc_score)
+            #print("-----------------------------------")
             # when we found the category "Food&Drink", we update the total goods
             if news[doc_position][2] == "Food & Drink":
                 goods += 1
             # when we are trying to compare the current document with itself, we should have score=1
-            if news[doc_position][3] == topic_description:
-                print("Comparison of the current article with itself.")
-                print("Score: ", doc_score)
-                print("-----------------------------------")
+            #if news[doc_position][3] == topic_description:
+                #print("Comparison of the current article with itself.")
+                #print("Score: ", doc_score)
+                #print("-----------------------------------")
         total_goods += goods
     ratio = total_goods / (num_articles_topic * 10)
 
-    print("total_goods =", total_goods)
-    print("num_articles_topic =", num_articles_topic)
+    #print("total_goods =", total_goods)
+    #print("num_articles_topic =", num_articles_topic)
 
     return ratio
 
