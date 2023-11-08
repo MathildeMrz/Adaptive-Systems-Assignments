@@ -8,9 +8,8 @@ from surprise import Dataset
 from surprise.accuracy import mae
 from surprise.model_selection import train_test_split
 
-
 # Load the movielens-100k dataset (download it if needed).
-# data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_builtin('ml-100k')
 
 def precision_recall_at_n(predictions, n=10, threshold=3.5):
     """Return precision and recall at n metrics for each user"""
@@ -107,7 +106,7 @@ def load_csv():
 
 # load ratings from csv
 
-data = load_csv()
+#data = load_csv()
 
 # Dataset splitting in trainset and testset for 25% sparsity
 
