@@ -57,7 +57,7 @@ def train_test(size):
                        'user_based': True  # compute similarities between users
                        }
 
-    k_values_to_test = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    k_values_to_test = list(range(1, 201))
 
     min_mae = float('inf')
     best_k = None
@@ -88,6 +88,7 @@ def train_test(size):
     print("Precision:", pre)
     print("Recall:", recall)
     print("F1:", 2 * pre * recall / (pre + recall))
+
 
 # Sparcity of 25%
 train_test(25)
