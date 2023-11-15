@@ -83,7 +83,8 @@ def train_test(size):
     print(f"Best K for minimizing MAE: {best_k}")
     print(f"Lowest MAE: {min_mae}")
 
-    plt.plot(k_values_to_test, mae_values, marker='o')
+    plt.plot(k_values_to_test, mae_values, marker='o', label='MAE values')
+    plt.scatter(best_k, min_mae, color='red', label=f'Best K={best_k}\nLowest MAE={min_mae}', zorder=5)
     plt.title(f'MAE values for different k (Sparsity: {size}%)')  # Updated line
     plt.xlabel('k values')
     plt.ylabel('MAE')
