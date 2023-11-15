@@ -53,27 +53,17 @@ def train_test(size):
     trainset, testset = train_test_split(data, test_size=size / 100,
                                          random_state=22)
 
-    k_values_to_test = list(range(1, 201))
+    # prepare user-based SVD for predicting ratings from trainset
+    algo = SVD(random_state=3)
+    algo.fit(trainset)
 
-    min_mae = float('inf')
-    best_k = None
+    # estimate the ratings for all the pairs (user, item) in testset
+    predictionsSVD = algo.test(testset)
 
-    for k in k_values_to_test:
-        algo = SVD(random_state=3)
-        algo.fit(trainset)
-
-        # estimate the ratings for all the pairs (user, item) in testset25
-        predictionsSVD = algo.test(testset)
-
-        current_mae = mae(predictionsSVD)
-
-        if current_mae < min_mae:
-            min_mae = current_mae
-            best_k = k
+    current_mae = mae(predictionsSVD)
 
     print("Sparcity = ", size)
-    print(f"Best K for minimizing MAE: {best_k}")
-    print(f"Lowest MAE: {min_mae}")
+    print(f"MAE: {current_mae}")
 
     precisions, recalls = precision_recall_at_n(predictionsSVD, n=5, threshold=4)
 
