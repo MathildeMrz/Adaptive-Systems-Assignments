@@ -13,6 +13,7 @@ print(f"Users number : {trainset.n_users}")
 mae_values = []
 best_k = None
 
+
 def precision_recall_at_n(predictions, n=10, threshold=4):
     """Return precision and recall at n metrics for each user"""
 
@@ -84,6 +85,10 @@ def train_test(size):
     best_algo.fit(trainset)
     predictionsKNN_best = best_algo.test(testset)
 
+    print(f"Sparcity: {size}%")
+    print(f"Best K for minimizing MAE: {best_k}")
+    print(f"Lowest MAE: {min_mae}")
+
     n_values = range(10, 1000)
 
     for n in n_values:
@@ -99,11 +104,6 @@ def train_test(size):
         precision_values.append(pre)
         recall_values.append(recall)
 
-
-    print(f"Sparcity: {size}%")
-    print(f"Best K for minimizing MAE: {best_k}")
-    print(f"Lowest MAE: {min_mae}")
-
     # Plotting precision and recall values
     plt.plot(n_values, precision_values, label='Precision')
     plt.plot(n_values, recall_values, label='Recall')
@@ -113,7 +113,7 @@ def train_test(size):
     plt.ylabel('Score')
     plt.legend()
     plt.title('Precision and Recall vs n Values')
-
+    plt.show()
 
 
 # Sparcity of 25%
