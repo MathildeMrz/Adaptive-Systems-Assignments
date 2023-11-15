@@ -62,17 +62,16 @@ def train_test(size):
 
     current_mae = mae(predictionsSVD)
 
-    print("Sparcity = ", size)
-    print(f"MAE: {current_mae}")
-
     precisions, recalls = precision_recall_at_n(predictionsSVD, n=5, threshold=4)
 
     # Precision and recall can then be averaged over all users
     pre = sum(prec for prec in precisions.values()) / len(precisions)
     recall = sum(rec for rec in recalls.values()) / len(recalls)
-    print("Precision:", pre)
-    print("Recall:", recall)
-    print("F1:", 2 * pre * recall / (pre + recall))
+    print(f"Sparcity: {size}%")
+    print(f"MAE: {current_mae}")
+    print(f"Precision: {pre:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1 Score: {2 * pre * recall / (pre + recall):.4f}")
 
 
 # Sparcity of 25%

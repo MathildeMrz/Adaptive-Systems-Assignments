@@ -11,8 +11,10 @@ from surprise.model_selection import train_test_split
 # Load the movielens-100k dataset (download it if needed).
 data = Dataset.load_builtin('ml-100k')
 
+trainset = data.build_full_trainset()
+print(f"Users number : {trainset.n_users}")
 
-def precision_recall_at_n(predictions, n=10, threshold=3.5):
+def precision_recall_at_n(predictions, n=10, threshold=4):
     """Return precision and recall at n metrics for each user"""
 
     # First map the predictions to each user.
@@ -57,7 +59,7 @@ def train_test(size):
                        'user_based': True  # compute similarities between users
                        }
 
-    k_values_to_test = list(range(1, 201))
+    k_values_to_test = list(range(1, 943))
 
     min_mae = float('inf')
     best_k = None
@@ -76,19 +78,18 @@ def train_test(size):
             min_mae = current_mae
             best_k = k
 
-    print("Sparcity = ", size)
-    print(f"Best K for minimizing MAE: {best_k}")
-    print(f"Lowest MAE: {min_mae}")
-
     precisions, recalls = precision_recall_at_n(predictionsKNN, n=5, threshold=4)
 
     # Precision and recall can then be averaged over all users
     pre = sum(prec for prec in precisions.values()) / len(precisions)
     recall = sum(rec for rec in recalls.values()) / len(recalls)
-    print("Precision:", pre)
-    print("Recall:", recall)
-    print("F1:", 2 * pre * recall / (pre + recall))
 
+    print(f"Sparcity: {size}%")
+    print(f"Best K for minimizing MAE: {best_k}")
+    print(f"Lowest MAE: {min_mae}")
+    print(f"Precision: {pre:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1 Score: {2 * pre * recall / (pre + recall):.4f}")
 
 # Sparcity of 25%
 train_test(25)
