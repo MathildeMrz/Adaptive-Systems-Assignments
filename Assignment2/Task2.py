@@ -11,7 +11,6 @@ from surprise.model_selection import train_test_split
 # Load the movielens-100k dataset (download it if needed).
 data = Dataset.load_builtin('ml-100k')
 
-
 def precision_recall_at_n(predictions, n=10, threshold=3.5):
     """Return precision and recall at k metrics for each user"""
 
@@ -69,9 +68,6 @@ def train_test(size):
     recall = sum(rec for rec in recalls.values()) / len(recalls)
     print(f"Sparcity: {size}%")
     print(f"MAE: {current_mae}")
-    print(f"Precision: {pre:.4f}")
-    print(f"Recall: {recall:.4f}")
-    print(f"F1 Score: {2 * pre * recall / (pre + recall):.4f}")
 
 
 # Sparcity of 25%
