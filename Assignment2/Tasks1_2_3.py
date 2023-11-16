@@ -12,7 +12,7 @@ usersNumber = data.build_full_trainset().n_users
 print(f"Users number : {usersNumber}")
 mae_values = []
 best_k = None
-n_values = range(10, 1000)
+n_values = range(10, 100)
 
 
 def precision_recall_at_n(predictions, n=10, threshold=4):
