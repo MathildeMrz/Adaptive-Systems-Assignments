@@ -8,8 +8,7 @@ from surprise import Reader, SVD
 
 # Load the movielens-100k dataset (download it if needed).
 data = Dataset.load_builtin('ml-100k')
-# usersNumber = data.build_full_trainset().n_users
-usersNumber = 100
+usersNumber = data.build_full_trainset().n_users
 print(f"Users number : {usersNumber}")
 mae_values = []
 best_k = None
