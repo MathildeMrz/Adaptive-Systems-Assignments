@@ -165,7 +165,7 @@ def train_test_svd(size):
     plt.xlabel('n Values')
     plt.ylabel('Score')
     plt.legend()
-    plt.title('(SVD) Precision and Recall for different n (Sparsity: {size}%)')
+    plt.title(f'(SVD) Precision and Recall for different n (Sparsity: {size}%)')
     plt.show()
 
 
