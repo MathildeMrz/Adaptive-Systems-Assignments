@@ -122,7 +122,7 @@ def train_test_kdd(size):
     plt.xlabel('n Values')
     plt.ylabel('Score')
     plt.legend()
-    plt.title('(KNN) Precision and Recall for different n (Sparsity: {size}%)')
+    plt.title(f'(KNN) Precision and Recall for different n (Sparsity: {size}%)')
     plt.show()
 
 
