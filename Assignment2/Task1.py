@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 
 # Load the movielens-100k dataset (download it if needed).
 data = Dataset.load_builtin('ml-100k')
-
-trainset = data.build_full_trainset()
-print(f"Users number : {trainset.n_users}")
+usersNumber = data.build_full_trainset().n_users
+print(f"Users number : {usersNumber}")
 mae_values = []
 best_k = None
+
 
 def precision_recall_at_n(predictions, n=10, threshold=4):
     """Return precision and recall at n metrics for each user"""
@@ -60,7 +60,7 @@ def train_test(size):
                        'user_based': True  # compute similarities between users
                        }
 
-    k_values_to_test = list(range(1, 100))  # replace 100 by 943
+    k_values_to_test = list(range(1, usersNumber))
 
     min_mae = float('inf')
 
@@ -89,6 +89,7 @@ def train_test(size):
     plt.xlabel('k values')
     plt.ylabel('MAE')
     plt.show()
+
 
 # Sparcity of 25%
 train_test(25)
