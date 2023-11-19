@@ -56,6 +56,7 @@ def train_test_kdd(size):
 
     precision_values = []
     recall_values = []
+    f1_values = []
 
     # Dataset splitting in trainset and testset for size% sparsity
     trainset, testset = train_test_split(data, test_size=size / 100,
@@ -107,16 +108,20 @@ def train_test_kdd(size):
         # Precision and recall can then be averaged over all users
         pre = sum(prec for prec in precisions.values()) / len(precisions)
         recall = sum(rec for rec in recalls.values()) / len(recalls)
+        f1 = 2 * pre * recall / (pre + recall)
 
         print(f"Precision: {pre}")
         print(f"Recall: {recall}")
+        print(f"F1: {f1}")
 
         precision_values.append(pre)
         recall_values.append(recall)
+        f1_values.append(f1)
 
     # Plotting precision and recall values
     plt.plot(n_values, precision_values, label='Precision')
     plt.plot(n_values, recall_values, label='Recall')
+    plt.plot(n_values, f1_values, label='F1')
 
     # Adding labels and legend
     plt.xlabel('n Values')
@@ -132,6 +137,7 @@ def train_test_svd(size):
                                          random_state=22)
     precision_values = []
     recall_values = []
+    f1_values = []
 
     # prepare user-based SVD for predicting ratings from trainset
     algo = SVD(random_state=3)
@@ -150,16 +156,20 @@ def train_test_svd(size):
         # Precision and recall can then be averaged over all users
         pre = sum(prec for prec in precisions.values()) / len(precisions)
         recall = sum(rec for rec in recalls.values()) / len(recalls)
+        f1 = 2*pre*recall/(pre+recall)
 
         print(f"Precision: {pre}")
         print(f"Recall: {recall}")
+        print(f"F1: {f1}")
 
         precision_values.append(pre)
         recall_values.append(recall)
+        f1_values.append(f1)
 
     # Plotting precision and recall values
     plt.plot(n_values, precision_values, label='Precision')
     plt.plot(n_values, recall_values, label='Recall')
+    plt.plot(n_values, f1_values, label='F1')
 
     # Adding labels and legend
     plt.xlabel('n Values')
