@@ -129,6 +129,7 @@ def train_test_kdd(size):
     plt.legend()
     plt.title(f'(KNN) Precision and Recall for different n (Sparsity: {size}%)')
     plt.show()
+    return precision_values, recall_values, f1_values
 
 
 def train_test_svd(size):
@@ -177,16 +178,82 @@ def train_test_svd(size):
     plt.legend()
     plt.title(f'(SVD) Precision and Recall for different n (Sparsity: {size}%)')
     plt.show()
+    return precision_values, recall_values, f1_values
 
 
 # -----------------------------Task 1----------------------------- #
-# Sparcity of 25%
-train_test_kdd(25)
-# Sparcity of 75%
-train_test_kdd(75)
+# Sparcity of 25% - KNN
+precision_knn_25, recall_knn_25, f1_knn_25 = train_test_kdd(25)
+# Sparcity of 75% - KNN
+precision_knn_75, recall_knn_75, f1_knn_75 = train_test_kdd(75)
 
 # -----------------------------Task 2----------------------------- #
-# Sparcity of 25%
-train_test_svd(25)
-# Sparcity of 75%
-train_test_svd(75)
+# Sparcity of 25% - SVD
+precision_svd_25, recall_svd_25, f1_svd_25 = train_test_svd(25)
+# Sparcity of 75% - SVD
+precision_svd_75, recall_svd_75, f1_svd_75 = train_test_svd(75)
+
+# -----------------------------KNN vs SVD----------------------------- #
+# Sparsity = 25%
+plt.plot(n_values, precision_knn_25, label='Precision KNN 25%', color='blue')
+plt.plot(n_values, recall_knn_25, label='Recall KNN 25%', color='blue', linestyle='--')
+plt.plot(n_values, f1_knn_25, label='F1 KNN 25%', color='blue', linestyle=':')
+
+plt.plot(n_values, precision_svd_25, label='Precision SVD 25%', color='pink')
+plt.plot(n_values, recall_svd_25, label='Recall SVD 25%', color='pink', linestyle='--')
+plt.plot(n_values, f1_svd_25, label='F1 SVD 25%', color='pink', linestyle=':')
+
+plt.xlabel('n Values')
+plt.ylabel('Score')
+plt.legend()
+plt.title('Precision, Recall, and F1 for different n (KNN vs SVD) sparcity = 25%')
+
+plt.show()
+
+# Sparsity = 75%
+plt.plot(n_values, precision_knn_75, label='Precision KNN 75%', color='blue')
+plt.plot(n_values, recall_knn_75, label='Recall KNN 75%', color='blue', linestyle='--')
+plt.plot(n_values, f1_knn_75, label='F1 KNN 75%', color='blue', linestyle=':')
+
+plt.plot(n_values, precision_svd_75, label='Precision SVD 75%', color='pink')
+plt.plot(n_values, recall_svd_75, label='Recall SVD 75%', color='pink', linestyle='--')
+plt.plot(n_values, f1_svd_75, label='F1 SVD 75%', color='pink', linestyle=':')
+
+plt.xlabel('n Values')
+plt.ylabel('Score')
+plt.legend()
+plt.title('Precision, Recall, and F1 for different n (KNN vs SVD) sparcity = 75%')
+
+plt.show()
+
+# ----------------------------- KNN ----------------------------- #
+plt.plot(n_values, precision_knn_25, label='Precision KNN 25%', color='blue')
+plt.plot(n_values, recall_knn_25, label='Recall KNN 25%', color='blue', linestyle='--')
+plt.plot(n_values, f1_knn_25, label='F1 KNN 25%', color='blue', linestyle=':')
+
+plt.plot(n_values, precision_knn_75, label='Precision KNN 75%', color='pink')
+plt.plot(n_values, recall_knn_75, label='Recall KNN 75%', color='pink', linestyle='--')
+plt.plot(n_values, f1_knn_75, label='F1 KNN 75%', color='pink', linestyle=':')
+
+plt.xlabel('n Values')
+plt.ylabel('Score')
+plt.legend()
+plt.title('Precision, Recall, and F1 for different n (KNN)')
+
+plt.show()
+
+# ----------------------------- SVD ----------------------------- #
+plt.plot(n_values, precision_svd_25, label='Precision SVD 25%', color='blue')
+plt.plot(n_values, recall_svd_25, label='Recall SVD 25%', color='blue', linestyle='--')
+plt.plot(n_values, f1_svd_25, label='F1 SVD 25%', color='blue', linestyle=':')
+
+plt.plot(n_values, precision_svd_75, label='Precision SVD 75%', color='pink')
+plt.plot(n_values, recall_svd_75, label='Recall SVD 75%', color='pink', linestyle='--')
+plt.plot(n_values, f1_svd_75, label='F1 SVD 75%', color='pink', linestyle=':')
+
+plt.xlabel('n Values')
+plt.ylabel('Score')
+plt.legend()
+plt.title('Precision, Recall, and F1 for different n (SVD)')
+
+plt.show()
