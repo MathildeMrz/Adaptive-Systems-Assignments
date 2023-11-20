@@ -15,8 +15,8 @@ best_k = None
 n_values = range(10, 100)
 
 
+"""Return precision and recall at n metrics for each user"""
 def precision_recall_at_n(predictions, n=10, threshold=4):
-    """Return precision and recall at n metrics for each user"""
 
     # First map the predictions to each user.
     user_est_true = defaultdict(list)
@@ -40,12 +40,10 @@ def precision_recall_at_n(predictions, n=10, threshold=4):
 
         # Precision@n: Proportion of recommended items that are relevant
         # When n_rec_k is 0, Precision is undefined. We here set it to 0.
-
         precisions[uid] = n_rel_and_rec / n
 
         # Recall@n: Proportion of relevant items that are recommended
         # When n_rel is 0, Recall is undefined. We here set it to 0.
-
         recalls[uid] = n_rel_and_rec / n_rel if n_rel != 0 else 0
 
     return precisions, recalls
